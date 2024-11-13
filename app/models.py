@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Dict, Union, TypedDict
+from typing import List, Union, TypedDict
 
 class Step(TypedDict):
     step: str

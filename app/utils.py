@@ -1,13 +1,11 @@
 from langchain_openai import ChatOpenAI
-import asyncio
 from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 from typing import Dict, Any
 import numpy as np
-from apps_folder.models import TestCases
+from .models import TestCases
 import os
 import requests
-import json
 from bson import ObjectId
 from dotenv import load_dotenv
 from ragas import evaluate
@@ -19,9 +17,8 @@ from pinecone import Pinecone
 from langchain_pinecone import PineconeVectorStore
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.output_parsers.json import SimpleJsonOutputParser
-from pymongo import MongoClient
-from apps_folder.constants import SYSTEM_PROMPT_CONVERT_TEXTCASES_TO_OP, SYSTEM_PROMPT_CONVERT_USER_TEXT_TO_TESTCASES
-from apps_folder.database.db import Database
+from .constants import SYSTEM_PROMPT_CONVERT_TEXTCASES_TO_OP, SYSTEM_PROMPT_CONVERT_USER_TEXT_TO_TESTCASES
+from .database.db import Database
 
 load_dotenv()
 
@@ -76,18 +73,23 @@ async def evaluate_test_cases(payload: dict, id):
     # Ensure Database connection
     db = Database.db
     cursor_bot_config = db['bot_configurations']
-    cursor_faq_kbs = db['faq_kbs']
-    cursor_bot_kb_mappings = db['bot_kb_mappings']
 
     # Fetch bot and KB details from MongoDB
     bot_config_details = await cursor_bot_config.find_one({"bot_id": ObjectId(agent_id)}, {})
     print(f"Bot Config Details: {bot_config_details}")  # Debugging line
+    
+    cursor_faq_kbs = db['faq_kbs']
 
     bot_details = await cursor_faq_kbs.find_one({"_id": ObjectId(agent_id)}, {})
     print(f"Bot Details: {bot_details}")  # Debugging line
+    
+    db = Database.db
+    cursor_bot_kb_mappings = db['bot_kb_mappings']
+
 
     connected_kbs_cursor = cursor_bot_kb_mappings.find({"id_bot": ObjectId(agent_id)})
-    kb_response = await connected_kbs_cursor.to_list(length=None) 
+    kb_response = await connected_kbs_cursor.to_list(length=100)  # specify the length as needed
+
     kbs = [str(doc['id_kb']) for doc in kb_response]
     print(f"Connected KBs Response: {kb_response}")
 

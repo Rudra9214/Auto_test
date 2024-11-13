@@ -1,9 +1,6 @@
-from fastapi import APIRouter, HTTPException, Depends
-from apps_folder import models
+from fastapi import APIRouter, HTTPException
+from .. import models
 from ..services.ai_service import EvaluateService
-from fastapi import FastAPI
-from pydantic import BaseModel
-
 
 
 router = APIRouter(prefix="/testcase", tags=["evaluate"])

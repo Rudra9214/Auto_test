@@ -1,10 +1,6 @@
-import os
-from typing import Union
 from bson import ObjectId
-from fastapi import HTTPException, FastAPI
-from fastapi.concurrency import run_in_threadpool
 from ..utils import convert_numpy_types, generate_test_cases, evaluate_test_cases
-from apps_folder.database.db import Database
+from ..database.db import Database
 
 
 class EvaluateService:
@@ -43,4 +39,4 @@ class EvaluateService:
         evaluation_results = await evaluate_test_cases(response, self.agent_id)
         converted_response = await convert_numpy_types(evaluation_results)  
         
-        return converted_response
+        return evaluation_results

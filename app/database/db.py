@@ -1,6 +1,5 @@
 import os
 from motor.motor_asyncio import AsyncIOMotorClient
-from fastapi import FastAPI
 from dotenv import load_dotenv
 
 load_dotenv()
